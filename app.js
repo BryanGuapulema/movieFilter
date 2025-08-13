@@ -10,9 +10,6 @@ const movies = mockMovies.results
 
 let favoriteMovies = loadFavorites()
 
-console.log(favoriteMovies)
-
-
 renderMovies(movies, moviesList)
 renderMovies(getFavoriteMoviesObjects(), favoritesList)
 
@@ -84,12 +81,14 @@ function renderMovies(movies,container){
 
 function renderSingleMovie(movie,container){
     const card = document.createElement("div");
+    const poster = document.createElement("img");
     const title = document.createElement("p")
     const year = document.createElement("p")
     const rating = document.createElement("p")
     const favoriteButton = document.createElement("button")
 
     card.classList.add("movie-card");
+    poster.src = `${ "https://image.tmdb.org/t/p/w500"+movie.poster_path}"`
     title.innerHTML = `<p><strong>${movie.title}</strong> </p>`
     year.innerHTML = `<p><strong>Año: </strong> ${movie.release_date.slice(0,4)}</p>`
     rating.innerHTML = `<p><strong>Rating: </strong> ${movie.vote_average}/10 ⭐</p>`
@@ -105,6 +104,7 @@ function renderSingleMovie(movie,container){
         toggleFavorite.apply(this, [favoriteButton, movie])
     })
 
+    card.appendChild(poster)
     card.appendChild(title)
     card.appendChild(year)
     card.appendChild(rating)

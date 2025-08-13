@@ -31,6 +31,7 @@ input {
 }
 
 .movie-card {
+  width: 150px;
   background-color: #222;
   border-radius: 10px;
   overflow: hidden;
@@ -45,11 +46,6 @@ input {
 .movie-card img {
   width: 100%;
   display: block;
-}
-
-.movie-card h3 {
-  font-size: 1rem;
-  margin: 10px 0;
 }
 
 .favorite-btn {
