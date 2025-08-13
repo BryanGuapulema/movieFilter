@@ -1,19 +1,22 @@
+//importing mock for develop.
 import { mockMovies } from './mock.js';
 
+//elements declararion
 const searchInput = document.querySelector("#searchInput");
 const moviesList = document.querySelector("#moviesList");
 const favoritesList = document.querySelector("#favoritesList");
 
+//globalvariables
 const LOCAL_STORAGE_KEY = "favorites"
-
 const movies = mockMovies.results
-
 let favoriteMovies = loadFavorites()
 
+
+//entrypoint
 renderMovies(movies, moviesList)
 renderMovies(getFavoriteMoviesObjects(), favoritesList)
 
-
+//events
 searchInput.addEventListener("input",
     debounce((event)=>{
         const searchText = event.target.value.trim().toLowerCase()
@@ -22,6 +25,8 @@ searchInput.addEventListener("input",
         renderMovies(filteredMovies, moviesList)
     },500)
 )
+
+// ---UTILITIES FOR POPULAR MOVIES SEARCHING
 
 function debounce(fn, delay) {
   let timeoutId
@@ -32,41 +37,6 @@ function debounce(fn, delay) {
     }, delay)
   };
 }
-
-function loadFavorites(){
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY)    
-    
-    if (!raw) return [];
-
-    try {    
-        const parsed = JSON.parse(raw)
-        return Array.isArray(parsed) ? parsed : [];    
-    } catch (err) {
-        console.error("Formato inválido, limpiando key:", err)
-        localStorage.removeItem(LOCAL_STORAGE_KEY)
-        return []
-    }
-
-    
-}
-
-function getFavoriteMoviesObjects(){
-    const  favoriteMoviesObjects = movies.filter(movie =>
-            favoriteMovies.includes(movie.id)
-    )     
-    
-    return favoriteMoviesObjects
-}
-
-function saveFavorites(){
-    try{
-        localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(favoriteMovies))
-    } catch (err) {
-    console.error("No se pudo guardar en localStorage:", err)
-    }
-}
-
-
 
 function renderMovies(movies,container){
     container.innerHTML = ""
@@ -114,20 +84,6 @@ function renderSingleMovie(movie,container){
     container.appendChild(card)
 }
 
-function toggleFavorite(favoriteButton,movie){
-    if (!favoriteButton.classList.contains("favorite-btn")){//si no es favorito
-            favoriteButton.classList.replace("normal-btn","favorite-btn")
-            favoriteMovies.push(movie.id)
-        }else{
-            favoriteButton.classList.replace("favorite-btn", "normal-btn")
-            favoriteMovies = favoriteMovies.filter(m => m!==movie.id)
-        }        
-
-        saveFavorites()
-        //loadFavorites()
-        renderMovies(getFavoriteMoviesObjects(), favoritesList)
-}
-
 function filterMovies(searchText){
     if(!searchText) return movies
 
@@ -145,3 +101,51 @@ function filterMovies(searchText){
 
 //     return movies = await fetch('https://api.themoviedb.org/3/movie/popular?language=es-ES&page=1', options).then(res => res.json())
 // }
+
+
+
+// ---UTILITIES FOR FAVORITES MOVIES 
+
+function saveFavorites(){
+    try{
+        localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(favoriteMovies))
+    } catch (err) {
+    console.error("No se pudo guardar en localStorage:", err)
+    }
+}
+
+function loadFavorites(){
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY)    
+    
+    if (!raw) return [];
+
+    try {    
+        const parsed = JSON.parse(raw)
+        return Array.isArray(parsed) ? parsed : [];    
+    } catch (err) {
+        console.error("Formato inválido, limpiando key:", err)
+        localStorage.removeItem(LOCAL_STORAGE_KEY)
+        return []
+    }    
+}
+
+function getFavoriteMoviesObjects(){
+    const  favoriteMoviesObjects = movies.filter(movie =>
+            favoriteMovies.includes(movie.id)
+    )         
+    return favoriteMoviesObjects
+}
+
+function toggleFavorite(favoriteButton,movie){
+    if (!favoriteButton.classList.contains("favorite-btn")){//si no es favorito
+        favoriteButton.classList.replace("normal-btn","favorite-btn")
+        favoriteMovies.push(movie.id)
+    }else{
+        favoriteButton.classList.replace("favorite-btn", "normal-btn")
+        favoriteMovies = favoriteMovies.filter(m => m!==movie.id)
+    }        
+
+    saveFavorites()
+    //loadFavorites()
+    renderMovies(getFavoriteMoviesObjects(), favoritesList)
+}
