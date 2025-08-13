@@ -1,14 +1,19 @@
+import { mockMovies } from './mock.js';
+
 const searchInput = document.querySelector("#searchInput");
 const moviesList = document.querySelector("#moviesList");
 const favoritesList = document.querySelector("#favoritesList");
 
-import { mockMovies } from './mock.js';
+const LOCAL_STORAGE_KEY = "favorites"
 
 const movies = mockMovies.results
-const favoriteMovies = []
+let favoriteMovies = loadFavorites()
+
+console.log(favoriteMovies)
 
 renderMovies(movies, moviesList)
 renderMovies(favoriteMovies, favoritesList)
+
 
 searchInput.addEventListener("input",
     debounce((event)=>{
@@ -29,6 +34,34 @@ function debounce(fn, delay) {
   };
 }
 
+function loadFavorites(){
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY)
+    
+    if (!raw) return [];
+
+    try {
+        const favoriteMoviesObjects = movies.filter(movie =>
+            raw.includes(movie.id)
+        )
+        return favoriteMoviesObjects
+
+    } catch (err) {
+        console.error("Formato inválido, limpiando key:", err);
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        return [];
+    }
+}
+
+function saveFavorites(){
+    try{
+        localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(favoriteMovies))
+    } catch (err) {
+    console.error("No se pudo guardar en localStorage:", err)
+    }
+}
+
+
+
 function renderMovies(movies,container){
     container.innerHTML = ""
 
@@ -45,18 +78,45 @@ function renderSingleMovie(movie,container){
     const title = document.createElement("p")
     const year = document.createElement("p")
     const rating = document.createElement("p")
+    const favoriteButton = document.createElement("button")
 
     card.classList.add("movie-card");
-    title.innerHTML = `<p><strong>Titulo:</strong> ${movie.title}</p>`
+    title.innerHTML = `<p><strong>${movie.title}</strong> </p>`
     year.innerHTML = `<p><strong>Año: </strong> ${movie.release_date.slice(0,4)}</p>`
     rating.innerHTML = `<p><strong>Rating: </strong> ${movie.vote_average}/10 ⭐</p>`
+    favoriteButton.textContent = "❤"
+
+    if (favoriteMovies.includes(movie.id)){
+        favoriteButton.classList.add("favorite-btn")
+    }else{
+        favoriteButton.classList.add("normal-btn")
+    }
+
+    favoriteButton.addEventListener("click",()=>{
+        toggleFavorite.apply(this, [favoriteButton, movie])
+    })
 
     card.appendChild(title)
-    card.appendChild(year,)
+    card.appendChild(year)
     card.appendChild(rating)
+    card.appendChild(favoriteButton)
 
     
     container.appendChild(card)
+}
+
+function toggleFavorite(favoriteButton,movie){
+    if (!favoriteButton.classList.contains("favorite-btn")){//si no es favorito
+            favoriteButton.classList.replace("normal-btn","favorite-btn")
+            favoriteMovies.push(movie.id)
+        }else{
+            favoriteButton.classList.replace("favorite-btn", "normal-btn")
+            favoriteMovies = favoriteMovies.filter(m => m!==movie.id)
+        }        
+
+        saveFavorites()
+        
+        renderMovies(loadFavorites(), favoritesList)
 }
 
 function filterMovies(searchText){

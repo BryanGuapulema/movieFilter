@@ -15,8 +15,8 @@
     -- Para cada película se muestra:
         --- Imagen (carátula)
         ✅ Título
-        --- Año de estreno
-        --- Rating (valor numérico)
+        ✅ Año de estreno
+        ✅ Rating (valor numérico)
 
 - Favoritos:
 
