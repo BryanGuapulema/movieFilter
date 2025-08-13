@@ -7,12 +7,14 @@ const favoritesList = document.querySelector("#favoritesList");
 const LOCAL_STORAGE_KEY = "favorites"
 
 const movies = mockMovies.results
+
 let favoriteMovies = loadFavorites()
 
 console.log(favoriteMovies)
 
+
 renderMovies(movies, moviesList)
-renderMovies(favoriteMovies, favoritesList)
+renderMovies(getFavoriteMoviesObjects(), favoritesList)
 
 
 searchInput.addEventListener("input",
@@ -35,21 +37,28 @@ function debounce(fn, delay) {
 }
 
 function loadFavorites(){
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY)
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY)    
     
     if (!raw) return [];
 
-    try {
-        const favoriteMoviesObjects = movies.filter(movie =>
-            raw.includes(movie.id)
-        )
-        return favoriteMoviesObjects
-
+    try {    
+        const parsed = JSON.parse(raw)
+        return Array.isArray(parsed) ? parsed : [];    
     } catch (err) {
-        console.error("Formato inválido, limpiando key:", err);
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-        return [];
+        console.error("Formato inválido, limpiando key:", err)
+        localStorage.removeItem(LOCAL_STORAGE_KEY)
+        return []
     }
+
+    
+}
+
+function getFavoriteMoviesObjects(){
+    const  favoriteMoviesObjects = movies.filter(movie =>
+            favoriteMovies.includes(movie.id)
+    )     
+    
+    return favoriteMoviesObjects
 }
 
 function saveFavorites(){
@@ -115,8 +124,8 @@ function toggleFavorite(favoriteButton,movie){
         }        
 
         saveFavorites()
-        
-        renderMovies(loadFavorites(), favoritesList)
+        //loadFavorites()
+        renderMovies(getFavoriteMoviesObjects(), favoritesList)
 }
 
 function filterMovies(searchText){
