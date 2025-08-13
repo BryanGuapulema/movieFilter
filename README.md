@@ -12,14 +12,14 @@
     Un campo de búsqueda permite filtrar películas por título en tiempo real con debounce para no saturar la API.
 
 - Mostrar película:
-    Para cada película se muestra:
-        Imagen (carátula)
-        Título
-        Año de estreno
-        Rating (valor numérico)
+    -- Para cada película se muestra:
+        --- Imagen (carátula)
+        --- Título
+        --- Año de estreno
+        --- Rating (valor numérico)
 
 - Favoritos:
 
-    Cada película tiene un botón para agregar o quitar de favoritos.
-    La lista de favoritos se guarda en localStorage.
-    Se muestra una sección con las películas favoritas, actualizada en tiempo real.
+    -- Cada película tiene un botón para agregar o quitar de favoritos.
+    -- La lista de favoritos se guarda en localStorage.
+    -- Se muestra una sección con las películas favoritas, actualizada en tiempo real.
